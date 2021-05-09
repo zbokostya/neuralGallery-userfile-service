@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.molistry'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '14'
+sourceCompatibility = '11'
 
 configurations {
 	developmentOnly
@@ -24,7 +24,6 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compile group: 'software.amazon.awssdk', name: 's3', version: '2.10.56'
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -40,17 +39,6 @@ dependencies {
 	}
 }
 
-tasks.withType(JavaCompile) {
-	options.compilerArgs += ["--enable-preview"]
-}
-
-tasks.withType(Test) {
-	jvmArgs += ["--enable-preview"]
-}
-
-tasks.withType(JavaExec) {
-	jvmArgs += ['--enable-preview']
-}
 
 test {
 	useJUnitPlatform()

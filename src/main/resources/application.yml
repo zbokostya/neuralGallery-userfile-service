@@ -9,5 +9,5 @@ spring:
       max-file-size: -1
       max-request-size: -1
 
-
+filePath: '/Users/kostyaz/dev/curs3sem/molistry-userfile-service/img/'
 

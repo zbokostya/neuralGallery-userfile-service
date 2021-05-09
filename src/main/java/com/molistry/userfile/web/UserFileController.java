@@ -18,24 +18,30 @@ import java.nio.file.Path;
 public class UserFileController {
 
     private final StorageService storageService;
-    private final String path = "/Users/kostyaz/dev/curs3sem/molistry-userfile-service/img/";
 
-    @GetMapping
+    @GetMapping("/file")
     public ResponseEntity<ByteArrayResource> getFile(@RequestParam String originalName) {
         try {
 
-            byte[] file = Files.readAllBytes(Path.of(path + originalName));
+            Path path = Path.of(storageService.getPath(originalName));
+            byte[] file = Files.readAllBytes(path);
             final ByteArrayResource byteArrayResource = new ByteArrayResource(file);
-            storageService.deleteFile(path + originalName);
+            storageService.deleteFile(path);
             return ResponseEntity.ok()
                     .contentLength(file.length)
-                    .contentType(MediaType.IMAGE_JPEG)
+                    .contentType(MediaType.valueOf(Files.probeContentType(path)))
                     .body(byteArrayResource);
         } catch (IOException e) {
             return ResponseEntity.notFound().header("error", "File not found").build();
         }
 
     }
+
+    @GetMapping
+    public ResponseEntity<Boolean> isFileExist(@RequestParam String originalName) {
+        return ResponseEntity.ok(storageService.isFileExist(originalName));
+    }
+
 
     @PostMapping
     public ResponseEntity<String> uploadImage(@RequestPart(value = "imageFile") MultipartFile file,
