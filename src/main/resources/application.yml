@@ -1,0 +1,13 @@
+server:
+  port: 9901
+
+spring:
+  application:
+    name: 'neuralNetwork-file-service'
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+
+
+

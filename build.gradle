@@ -1,0 +1,57 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.0.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'com.molistry'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '14'
+
+configurations {
+	developmentOnly
+	runtimeClasspath {
+		extendsFrom developmentOnly
+	}
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compile group: 'software.amazon.awssdk', name: 's3', version: '2.10.56'
+
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	implementation "org.springframework.boot:spring-boot-starter-logging"
+	implementation "net.logstash.logback:logstash-logback-encoder:6.3"
+	implementation "co.elastic.logging:logback-ecs-encoder:0.4.0"
+
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.compilerArgs += ["--enable-preview"]
+}
+
+tasks.withType(Test) {
+	jvmArgs += ["--enable-preview"]
+}
+
+tasks.withType(JavaExec) {
+	jvmArgs += ['--enable-preview']
+}
+
+test {
+	useJUnitPlatform()
+}
