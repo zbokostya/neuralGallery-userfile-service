@@ -35,8 +35,8 @@ public class StorageService {
 
     }
 
-    public String getPath(String originalName) {
-        return path + originalName;
+    public String getPath() {
+        return path;
     }
 
     public void deleteFile(String path) {

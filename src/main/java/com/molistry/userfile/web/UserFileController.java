@@ -22,9 +22,7 @@ public class UserFileController {
     @GetMapping("/file")
     public ResponseEntity<ByteArrayResource> getFile(@RequestParam String originalName) {
         try {
-            int index = originalName.lastIndexOf('/');
-            String curPath = storageService.getPath(originalName).substring(0, index + 1) + "edit" + storageService.getPath(originalName).substring(index);
-            Path path = Path.of(curPath);
+            Path path = Path.of(storageService.getPath() + "edit_" + originalName);
             byte[] file = Files.readAllBytes(path);
             final ByteArrayResource byteArrayResource = new ByteArrayResource(file);
             storageService.deleteFile(originalName);
