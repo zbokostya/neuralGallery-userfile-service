@@ -1,9 +1,9 @@
 package com.molistry.userfile.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,15 +20,18 @@ public class StorageService {
     @Value("${filePath}")
     private String path;
 
-    public String uploadImage(MultipartFile imageFile, String originalName) {
+    @Value("${neuralPath}")
+    private String neuralPath;
+
+    public String uploadImage(MultipartFile imageFile) {
         try {
             byte[] bytes = imageFile.getBytes();
-            Path filePath = Path.of(path + originalName);
+            Path filePath = Path.of(path + imageFile.getOriginalFilename());
             Files.write(filePath, bytes);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return originalName;
+        return imageFile.getOriginalFilename();
 
     }
 
@@ -36,21 +39,24 @@ public class StorageService {
         return path + originalName;
     }
 
-    public void deleteFile(Path path) {
+    public void deleteFile(String path) {
+        Path globalPath = Path.of(this.path + path);
         try {
-            Files.delete(path);
+            Files.delete(globalPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // TODO
-    public void editImage(String filePath) {
+
+
+    public void editImageFile(String filePathOrig, String filePathStyle) {
         ArrayList<String> commands = new ArrayList<>();
         commands.add("python3");
-        commands.add("/Users/kostyaz/dev/curs3sem/molistry-userfile-service/1.py");
-        commands.add("img/" + filePath);
-//        commands.add("1.py -img " + path + filePath);
+//        commands.add("/home/zbokostya/server/neural/neural.py");
+        commands.add(neuralPath);
+        commands.add("-file_orig=" + path + filePathOrig);
+        commands.add("-file_style=" + path + filePathStyle);
 
         ProcessBuilder pb = new ProcessBuilder(commands).inheritIO();
         try {

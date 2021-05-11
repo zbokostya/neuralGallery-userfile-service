@@ -23,10 +23,10 @@ public class UserFileController {
     public ResponseEntity<ByteArrayResource> getFile(@RequestParam String originalName) {
         try {
 
-            Path path = Path.of(storageService.getPath(originalName));
+            Path path = Path.of("edit_" + storageService.getPath(originalName));
             byte[] file = Files.readAllBytes(path);
             final ByteArrayResource byteArrayResource = new ByteArrayResource(file);
-            storageService.deleteFile(path);
+            storageService.deleteFile(originalName);
             return ResponseEntity.ok()
                     .contentLength(file.length)
                     .contentType(MediaType.valueOf(Files.probeContentType(path)))
@@ -42,12 +42,22 @@ public class UserFileController {
         return ResponseEntity.ok(storageService.isFileExist(originalName));
     }
 
-
     @PostMapping
     public ResponseEntity<String> uploadImage(@RequestPart(value = "imageFile") MultipartFile file,
-                                              @RequestPart String originalName) {
+                                              @RequestParam(required = false, value = "style") MultipartFile style,
+                                              @RequestParam(required = false) String style_id) {
+        storageService.uploadImage(file);
+        if (style != null) {
+            storageService.uploadImage(style);
+            storageService.editImageFile(file.getOriginalFilename(), style.getOriginalFilename());
+            storageService.deleteFile(style.getOriginalFilename());
+        } else if (style_id != null) {
+            // TODO
+        } else {
+            return ResponseEntity.notFound().header("error", "No style or style_id").build();
+        }
 
-        return ResponseEntity.ok(storageService.uploadImage(file, originalName));
+        return ResponseEntity.ok("upload");
     }
 
 }
