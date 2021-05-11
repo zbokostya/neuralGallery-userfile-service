@@ -22,8 +22,9 @@ public class UserFileController {
     @GetMapping("/file")
     public ResponseEntity<ByteArrayResource> getFile(@RequestParam String originalName) {
         try {
-
-            Path path = Path.of("edit_" + storageService.getPath(originalName));
+            int index = originalName.lastIndexOf('/');
+            String curPath = storageService.getPath(originalName).substring(0, index + 1) + "edit" + storageService.getPath(originalName).substring(index);
+            Path path = Path.of(curPath);
             byte[] file = Files.readAllBytes(path);
             final ByteArrayResource byteArrayResource = new ByteArrayResource(file);
             storageService.deleteFile(originalName);
@@ -46,17 +47,20 @@ public class UserFileController {
     public ResponseEntity<String> uploadImage(@RequestPart(value = "imageFile") MultipartFile file,
                                               @RequestParam(required = false, value = "style") MultipartFile style,
                                               @RequestParam(required = false) String style_id) {
-        storageService.uploadImage(file);
-        if (style != null) {
-            storageService.uploadImage(style);
-            storageService.editImageFile(file.getOriginalFilename(), style.getOriginalFilename());
-            storageService.deleteFile(style.getOriginalFilename());
-        } else if (style_id != null) {
-            // TODO
-        } else {
-            return ResponseEntity.notFound().header("error", "No style or style_id").build();
+        try {
+            storageService.uploadImage(file);
+            if (style != null) {
+                storageService.uploadImage(style);
+                storageService.editImageFile(file.getOriginalFilename(), style.getOriginalFilename());
+                storageService.deleteFile(style.getOriginalFilename());
+            } else if (style_id != null) {
+                // TODO
+            } else {
+                return ResponseEntity.notFound().header("error", "No style or style_id").build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.notFound().header("error", "Error on save").build();
         }
-
         return ResponseEntity.ok("upload");
     }
 
