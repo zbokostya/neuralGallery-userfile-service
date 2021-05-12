@@ -38,22 +38,22 @@ public class UserFileController {
 
     @GetMapping
     public ResponseEntity<Boolean> isFileExist(@RequestParam String originalName) {
-        return ResponseEntity.ok(storageService.isFileExist(originalName));
+        return ResponseEntity.ok(storageService.isFileExist(storageService.getPath() + "edit_" + originalName));
     }
 
     @PostMapping
     public ResponseEntity<String> uploadImage(@RequestPart(value = "imageFile") MultipartFile file,
                                               @RequestParam(required = false, value = "style") MultipartFile style,
-                                              @RequestParam(required = false) String style_id) {
+                                              @RequestParam(required = false) String styleId) {
         try {
             storageService.uploadImage(file);
             if (style != null) {
                 storageService.uploadImage(style);
-                storageService.editImageFile(file.getOriginalFilename(), style.getOriginalFilename());
-            } else if (style_id != null) {
-                // TODO
+                storageService.editImageFile(file.getOriginalFilename(), style.getOriginalFilename(), true);
+            } else if (styleId != null) {
+                storageService.editImageFile(file.getOriginalFilename(), "prepared_style_" + styleId + ".jpg", false);
             } else {
-                return ResponseEntity.notFound().header("error", "No style or style_id").build();
+                return ResponseEntity.notFound().header("error", "No style or style id").build();
             }
         } catch (Exception e) {
             return ResponseEntity.notFound().header("error", "Error on save").build();

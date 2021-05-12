@@ -54,7 +54,7 @@ public class StorageService {
 
 
     @Async
-    public void editImageFile(String filePathOrig, String filePathStyle) {
+    public void editImageFile(String filePathOrig, String filePathStyle, boolean deleteStyle) {
         ArrayList<String> commands = new ArrayList<>();
         commands.add("python3");
         commands.add(neuralPath);
@@ -78,11 +78,13 @@ public class StorageService {
             e.printStackTrace();
         }
         deleteFile(path + filePathOrig);
-        deleteFile(path + filePathStyle);
+        if (deleteStyle) {
+            deleteFile(path + filePathStyle);
+        }
     }
 
     public boolean isFileExist(String originalName) {
-        File tmpFile = new File(path + originalName);
+        File tmpFile = new File(originalName);
         return tmpFile.isFile();
     }
 
