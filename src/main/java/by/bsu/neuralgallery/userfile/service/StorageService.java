@@ -1,4 +1,4 @@
-package com.molistry.userfile.service;
+package by.bsu.neuralgallery.userfile.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;

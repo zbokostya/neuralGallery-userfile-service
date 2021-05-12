@@ -1,6 +1,6 @@
-package com.molistry.userfile.web;
+package by.bsu.neuralgallery.userfile.web;
 
-import com.molistry.userfile.service.StorageService;
+import by.bsu.neuralgallery.userfile.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;

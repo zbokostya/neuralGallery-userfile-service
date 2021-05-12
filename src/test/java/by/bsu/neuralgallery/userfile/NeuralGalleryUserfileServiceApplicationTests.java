@@ -1,10 +1,10 @@
-package com.molistry.userfile;
+package by.bsu.neuralgallery.userfile;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MolistryUserfileServiceApplicationTests {
+class NeuralGalleryUserfileServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
