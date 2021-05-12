@@ -2,6 +2,8 @@ package com.molistry.userfile.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +16,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+@EnableAsync
 @Service
 public class StorageService {
 
@@ -39,8 +42,9 @@ public class StorageService {
         return path;
     }
 
+    @Async
     public void deleteFile(String path) {
-        Path globalPath = Path.of(this.path + path);
+        Path globalPath = Path.of(path);
         try {
             Files.delete(globalPath);
         } catch (IOException e) {
@@ -49,11 +53,10 @@ public class StorageService {
     }
 
 
-
+    @Async
     public void editImageFile(String filePathOrig, String filePathStyle) {
         ArrayList<String> commands = new ArrayList<>();
         commands.add("python3");
-//        commands.add("/home/zbokostya/server/neural/neural.py");
         commands.add(neuralPath);
         commands.add("-file_orig=" + path + filePathOrig);
         commands.add("-file_style=" + path + filePathStyle);
@@ -74,6 +77,8 @@ public class StorageService {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+        deleteFile(path + filePathOrig);
+        deleteFile(path + filePathStyle);
     }
 
     public boolean isFileExist(String originalName) {

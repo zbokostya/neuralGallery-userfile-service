@@ -25,7 +25,7 @@ public class UserFileController {
             Path path = Path.of(storageService.getPath() + "edit_" + originalName);
             byte[] file = Files.readAllBytes(path);
             final ByteArrayResource byteArrayResource = new ByteArrayResource(file);
-            storageService.deleteFile(originalName);
+            storageService.deleteFile(storageService.getPath() + "edit_" + originalName);
             return ResponseEntity.ok()
                     .contentLength(file.length)
                     .contentType(MediaType.valueOf(Files.probeContentType(path)))
@@ -50,7 +50,6 @@ public class UserFileController {
             if (style != null) {
                 storageService.uploadImage(style);
                 storageService.editImageFile(file.getOriginalFilename(), style.getOriginalFilename());
-                storageService.deleteFile(style.getOriginalFilename());
             } else if (style_id != null) {
                 // TODO
             } else {
