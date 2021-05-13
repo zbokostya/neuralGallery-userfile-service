@@ -46,7 +46,7 @@ public class UserFileController {
         return ResponseEntity.ok(storageService.isFileExist(storageService.getPath() + "edit_" + originalName));
     }
 
-    @PostMapping("/styles")
+    @GetMapping("/styles")
     public ResponseEntity<ByteArrayResource> getStyles(@RequestParam String id){
         try {
             Path path = Path.of(storageService.getPath() + "prepared_style_" + id +".jpg");
