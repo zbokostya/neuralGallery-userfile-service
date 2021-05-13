@@ -1,7 +1,6 @@
 package by.bsu.neuralgallery.userfile.service;
 
-import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
@@ -18,6 +17,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @EnableAsync
 @Service
 public class StorageService {
@@ -28,15 +28,16 @@ public class StorageService {
     @Value("${neuralPath}")
     private String neuralPath;
 
-    public String uploadImage(MultipartFile imageFile) {
+    public void uploadImage(MultipartFile imageFile) {
         try {
+            log.info("File uploading: file: [{}]", path + imageFile.getOriginalFilename());
             byte[] bytes = imageFile.getBytes();
             Path filePath = Path.of(path + imageFile.getOriginalFilename());
             Files.write(filePath, bytes);
+            log.info("File uploaded: file: [{}]", path + imageFile.getOriginalFilename());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return imageFile.getOriginalFilename();
 
     }
 
@@ -46,9 +47,11 @@ public class StorageService {
 
     @Async
     public void deleteFile(String path) {
+        log.info("File deleting: file: [{}]", path);
         Path globalPath = Path.of(path);
         try {
             Files.delete(globalPath);
+            log.info("File deleted: file: [{}]", path);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,6 +60,7 @@ public class StorageService {
 
     @Async
     public void editImageFile(String filePathOrig, String filePathStyle, boolean deleteStyle) {
+        log.info("Started editing: file [{}], style [{}]", path + filePathOrig, path + filePathStyle);
         ArrayList<String> commands = new ArrayList<>();
         commands.add("python3");
         commands.add(neuralPath);
@@ -89,7 +93,6 @@ public class StorageService {
         File tmpFile = new File(originalName);
         return tmpFile.isFile();
     }
-
 
 
     private List<MediaType> getSupportedMediaTypes() {
