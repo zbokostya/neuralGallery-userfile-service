@@ -2,6 +2,9 @@ package by.bsu.neuralgallery.userfile.web;
 
 import by.bsu.neuralgallery.userfile.service.StorageService;
 import lombok.RequiredArgsConstructor;
+import net.logstash.logback.encoder.org.apache.commons.lang3.ArrayUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/userfiles")
@@ -39,6 +44,21 @@ public class UserFileController {
     @GetMapping
     public ResponseEntity<Boolean> isFileExist(@RequestParam String originalName) {
         return ResponseEntity.ok(storageService.isFileExist(storageService.getPath() + "edit_" + originalName));
+    }
+
+    @PostMapping("/styles")
+    public ResponseEntity<ByteArrayResource> getStyles(@RequestParam String id){
+        try {
+            Path path = Path.of(storageService.getPath() + "prepared_style_" + id +".jpg");
+            byte[] file = Files.readAllBytes(path);
+            final ByteArrayResource byteArrayResource = new ByteArrayResource(file);
+            return ResponseEntity.ok()
+                    .contentLength(file.length)
+                    .contentType(MediaType.valueOf(Files.probeContentType(path)))
+                    .body(byteArrayResource);
+        } catch (IOException e) {
+            return ResponseEntity.notFound().header("error", "File not found").build();
+        }
     }
 
     @PostMapping
